@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ShopThueBanSach.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class themMigration : Migration
+    public partial class InitialCreate_Supabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
