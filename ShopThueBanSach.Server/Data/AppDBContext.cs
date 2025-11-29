@@ -12,6 +12,7 @@ namespace ShopThueBanSach.Server.Data
 {
     public class AppDBContext(DbContextOptions<AppDBContext> options) : IdentityDbContext<User>(options)
     {
+        // hhh
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<Author> Authors { get; set; }
