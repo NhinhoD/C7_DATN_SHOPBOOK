@@ -49,7 +49,7 @@ namespace ShopThueBanSach.Server.Controllers
 				return Unauthorized(new { message = result.Message });
 
 			// Redirect về frontend với token nếu login thành công
-			var redirect = $"https://hexaclovershop.io.vn/oauth-callback?token={result.Token}&refreshToken={result.RefreshToken}";
+			var redirect = $"https://shopbook-frontend.vercel.app/oauth-callback?token={result.Token}&refreshToken={result.RefreshToken}";
 			return Redirect(redirect);
 		}
 

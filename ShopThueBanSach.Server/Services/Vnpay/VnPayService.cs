@@ -42,10 +42,10 @@ namespace ShopThueBanSach.Server.Services.Vnpay
 			var sessionValue = System.Text.Json.JsonSerializer.Serialize(paymentSession);
 			context.Session.SetString(sessionKey, sessionValue);
 
-			string frontendRedirectUrl = "https://hexaclovershop.io.vn/payment-success";
+			string frontendRedirectUrl = "https://shopbook-frontend.vercel.app/payment-success";
 
 			// Gắn URL callback server + frontend redirect vào query
-			string returnUrlWithRedirect = $"https://chosachonline-datn.onrender.com/api/saleorders/PaymentCallbackVnpay?redirect={HttpUtility.UrlEncode(frontendRedirectUrl)}";
+			string returnUrlWithRedirect = $"https://c7-datn-shopbook.onrender.com/api/saleorders/PaymentCallbackVnpay?redirect={HttpUtility.UrlEncode(frontendRedirectUrl)}";
 
 			// Tạo URL thanh toán
 			var vnpay = new VnPayLibrary();
