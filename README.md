@@ -72,7 +72,7 @@ Website bao gồm hai phân hệ chính:
 
 ```bash
 # Clone trang bán hàng
-git clone [https://github.com/dangthithuytien/datn.git](https://github.com/dangthithuytien/datn.git)
+git clone [https://github.com/NhinhoD/shopbook-frontend.git](https://github.com/NhinhoD/shopbook-frontend.git)
 
 # Clone trang Admin (nếu chạy riêng)
 git clone [https://github.com/HaoSugoi/admin-login-inspired-react.git](https://github.com/HaoSugoi/admin-login-inspired-react.git)
