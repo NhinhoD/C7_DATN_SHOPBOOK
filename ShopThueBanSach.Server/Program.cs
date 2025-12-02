@@ -24,7 +24,8 @@ namespace ShopThueBanSach.Server
 	{
 		public static async Task Main(string[] args)
 		{
-			var builder = WebApplication.CreateBuilder(args);
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            var builder = WebApplication.CreateBuilder(args);
 			builder.Services.AddDistributedMemoryCache();
 			builder.Services.AddSession(options =>
 			{
@@ -81,7 +82,7 @@ In = Microsoft.OpenApi.Models.ParameterLocation.Header,
 			builder.Services.AddControllers();
 			builder.Services.AddScoped<IAuthService, AuthService>();
 			builder.Services.AddScoped<IUserService, UserService>();
-			builder.Services.AddScoped<IEmailSender, EmailSender>();
+			builder.Services.AddTransient<IEmailSender, EmailSender>();
 			builder.Services.AddScoped<ICustomerService, CustomerService>();
 			builder.Services.AddScoped<IStaffService, StaffService>();
 			builder.Services.AddScoped<IAuthorService, AuthorService>();
