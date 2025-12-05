@@ -563,7 +563,7 @@ expires: DateTime.UtcNow.AddMinutes(30),
 			var code = GenerateRandomCode(6);
 			_cache.Set($"email_confirm_{email}", code, TimeSpan.FromMinutes(10));
 
-			await _emailSender.SendEmailAsync(user.Email, "Xác nhận địa chỉ email của bạn",
+			await _emailSender.SendEmailAsync(user.Email!, "Xác nhận địa chỉ email của bạn",
  $@"
 <div style='font-family: Arial, sans-serif; font-size: 16px; color: #333;'>
     <h2 style='color: #2a8dd2;'>Xác nhận địa chỉ Email</h2>

@@ -4,9 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <SpaRoot>..\shopthuebansach.client</SpaRoot>
-    <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
-    <SpaProxyServerUrl>https://localhost:55979</SpaProxyServerUrl>
+	<SpaRoot> ..\shopthuebansach.client </SpaRoot>
+	<SpaProxyLaunchCommand> npm run dev</SpaProxyLaunchCommand>
+	  <SpaProxyServerUrl>https://localhost:55979</SpaProxyServerUrl>
     <UserSecretsId>7730b553-7335-4fa8-9d57-76da726d5a20</UserSecretsId>
   </PropertyGroup>
 
