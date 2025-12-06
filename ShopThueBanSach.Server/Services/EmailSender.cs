@@ -1,6 +1,6 @@
-﻿using System.Net.Mail;
-using System.Net;
+﻿using MailKit.Net.Smtp;
 using ShopThueBanSach.Server.Services.Interfaces;
+using MimeKit;
 
 namespace ShopThueBanSach.Server.Services
 {
@@ -15,29 +15,39 @@ namespace ShopThueBanSach.Server.Services
 
         public async Task SendEmailAsync(string toEmail, string subject, string htmlContent)
         {
-
             var smtpSection = _configuration.GetSection("Smtp");
 
-            using var client = new SmtpClient(smtpSection["Host"]!)
+            var email = new MimeMessage();
+            email.From.Add(new MailboxAddress("Shop Sach Online", smtpSection["Username"]));
+            email.To.Add(new MailboxAddress("", toEmail));
+            email.Subject = subject;
+
+            var builder = new BodyBuilder();
+            builder.HtmlBody = htmlContent;
+            email.Body = builder.ToMessageBody();
+
+            using var client = new SmtpClient();
+            try
             {
-                Port = int.Parse(smtpSection["Port"]!),
-                // THÊM DÒNG NÀY VÀO TRƯỚC Credentials
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(smtpSection["Username"]!, smtpSection["Password"]!),
-                EnableSsl = true
-            };
+                // Kết nối tới Gmail (dùng Port 587 với SecureSocketOptions.StartTls)
+                await client.ConnectAsync(smtpSection["Host"], int.Parse(smtpSection["Port"]!), MailKit.Security.SecureSocketOptions.StartTls);
 
-            var message = new MailMessage
+                // Đăng nhập
+                await client.AuthenticateAsync(smtpSection["Username"], smtpSection["Password"]);
+
+                // Gửi mail
+                await client.SendAsync(email);
+            }
+            catch (Exception ex)
             {
-                From = new MailAddress(smtpSection["Username"]!),
-                Subject = subject,
-                Body = htmlContent,
-                IsBodyHtml = true
-            };
-
-            message.To.Add(toEmail);
-
-            await client.SendMailAsync(message);
+                // Log lỗi ra để xem nếu có vấn đề
+                System.Console.WriteLine("Lỗi gửi mail: " + ex.Message);
+                throw;
+            }
+            finally
+            {
+                await client.DisconnectAsync(true);
+            }
         }
     }
 }
