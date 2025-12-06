@@ -25,7 +25,7 @@ namespace ShopThueBanSach.Server
 		public static async Task Main(string[] args)
 		{
 
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             var builder = WebApplication.CreateBuilder(args);
 			builder.Services.AddDistributedMemoryCache();
 			builder.Services.AddSession(options =>
