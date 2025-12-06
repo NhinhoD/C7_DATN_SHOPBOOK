@@ -15,11 +15,14 @@ namespace ShopThueBanSach.Server.Services
 
         public async Task SendEmailAsync(string toEmail, string subject, string htmlContent)
         {
+
             var smtpSection = _configuration.GetSection("Smtp");
 
             using var client = new SmtpClient(smtpSection["Host"]!)
             {
                 Port = int.Parse(smtpSection["Port"]!),
+                // THÊM DÒNG NÀY VÀO TRƯỚC Credentials
+                UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(smtpSection["Username"]!, smtpSection["Password"]!),
                 EnableSsl = true
             };
