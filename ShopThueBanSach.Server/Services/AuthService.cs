@@ -10,6 +10,7 @@ using ShopThueBanSach.Server.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace ShopThueBanSach.Server.Services
 {
@@ -508,21 +509,51 @@ expires: DateTime.UtcNow.AddMinutes(30),
 			}
 		}
 
-		public async Task<AuthResult> SendResetPasswordCodeAsync(string email)
-		{
-			var user = await _userManager.FindByEmailAsync(email);
-			if (user == null)
-				return new AuthResult { IsSuccess = false, Message = "Email không tồn tại." };
+        public async Task<AuthResult> SendResetPasswordCodeAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return new AuthResult { IsSuccess = false, Message = "Email không tồn tại." };
 
-			var code = GenerateRandomCode(5); // 5 chữ số
-			_cache.Set(email, code, TimeSpan.FromMinutes(5)); // lưu mã vào cache
+            // 1. Sinh mã OTP an toàn hơn
+            var code = GenerateSecureRandomCode(5);
 
-			await _emailSender.SendEmailAsync(email, "Mã khôi phục mật khẩu", $"Mã của bạn là: {code}");
+            // 2. Lưu cache
+            _cache.Set(email, code, TimeSpan.FromMinutes(5));
 
-			return new AuthResult { IsSuccess = true, Message = "Mã đặt lại mật khẩu đã được gửi đến email." };
-		}
+            // 3. Gửi mail có Try-Catch để bắt lỗi
+            try
+            {
+                await _emailSender.SendEmailAsync(email, "Mã khôi phục mật khẩu", $"Mã của bạn là: {code}");
+            }
+            catch (Exception ex)
+            {
+                // Nếu gửi mail lỗi, xoá cache mã code đi để tránh rác
+                _cache.Remove(email);
+                // Trả về lỗi chi tiết cho Frontend biết
+                return new AuthResult { IsSuccess = false, Message = "Không thể gửi email. Lỗi: " + ex.Message };
+            }
 
-		public async Task<AuthResult> ResetPasswordAsync(ResetPasswordDto model)
+            return new AuthResult { IsSuccess = true, Message = "Mã đặt lại mật khẩu đã được gửi đến email." };
+        }
+        // Hàm random mới (Bảo mật hơn System.Random)
+        private string GenerateSecureRandomCode(int length)
+        {
+            const string chars = "0123456789";
+            var result = new char[length];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                byte[] data = new byte[length];
+                rng.GetBytes(data);
+                for (int i = 0; i < length; i++)
+                {
+                    // Lấy ngẫu nhiên ký tự từ chuỗi chars
+                    result[i] = chars[data[i] % chars.Length];
+                }
+            }
+            return new string(result);
+        }
+        public async Task<AuthResult> ResetPasswordAsync(ResetPasswordDto model)
 		{
 			var user = await _userManager.FindByEmailAsync(model.Email);
 			if (user == null)
