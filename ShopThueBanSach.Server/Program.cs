@@ -25,7 +25,6 @@ namespace ShopThueBanSach.Server
 		public static async Task Main(string[] args)
 		{
 
-            //https://c7-datn-shopbook.onrender.com
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             var builder = WebApplication.CreateBuilder(args);
 			builder.Services.AddDistributedMemoryCache();
