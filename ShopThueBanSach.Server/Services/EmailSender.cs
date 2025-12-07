@@ -41,7 +41,7 @@ namespace ShopThueBanSach.Server.Services
             try
             {
                 // Timeout kết nối: 10 giây (để không bị treo quá lâu nếu mạng lag)
-                client.Timeout = 10000;
+                client.Timeout = 100000;
 
                 // 3. KẾT NỐI:
                 // Dùng Port 465 + SslOnConnect để vượt qua tường lửa Google trên Render
