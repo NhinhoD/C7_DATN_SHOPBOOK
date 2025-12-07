@@ -19,7 +19,7 @@ namespace ShopThueBanSach.Server.Services
             var smtpUser = _configuration["Smtp:Username"];
             var smtpPass = _configuration["Smtp:Password"];
             var smtpHost = "smtp.gmail.com";
-            var smtpPort = 465;
+            var smtpPort = 587;
 
             // 2. KIỂM TRA AN TOÀN (Quan trọng):
             // Nếu quên set biến môi trường trên Render, code sẽ báo lỗi rõ ràng thay vì lỗi chung chung
