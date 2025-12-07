@@ -5,8 +5,6 @@ using ShopThueBanSach.Server.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using System;
-using System.Net; // Cần thêm dòng này để dùng Dns
-using System.Linq; // Cần thêm dòng này để dùng FirstOrDefault
 
 namespace ShopThueBanSach.Server.Services
 {
@@ -21,10 +19,13 @@ namespace ShopThueBanSach.Server.Services
 
         public async Task SendEmailAsync(string toEmail, string subject, string htmlContent)
         {
+            // Lấy config từ Environment
             var smtpUser = _configuration["Smtp:Username"];
             var smtpPass = _configuration["Smtp:Password"];
-            var host = "smtp.gmail.com";
-            var port = 587;
+
+            // QUAY VỀ PORT 465 + SSL (Bây giờ Docker đã tắt IPv6 nên cái này sẽ chạy ngon)
+            var smtpHost = "smtp.gmail.com";
+            var smtpPort = 465;
 
             var email = new MimeMessage();
             email.From.Add(new MailboxAddress("Shop Sach Online", smtpUser));
@@ -37,35 +38,21 @@ namespace ShopThueBanSach.Server.Services
             using var client = new SmtpClient();
             try
             {
-                client.Timeout = 30000; // Timeout 10s là đủ
+                client.Timeout = 20000; // 20s timeout
 
-                // --- KỸ THUẬT FORCE IPv4 ---
-                // 1. Phân giải tên miền ra IP
-                var ipAddresses = await Dns.GetHostAddressesAsync(host);
+                // LOG DEBUG
+                Console.WriteLine($"[MAIL] Connecting to {smtpHost}:{smtpPort} (SSL)...");
 
-                // 2. Chỉ lấy địa chỉ IPv4 (InterNetwork)
-                var ip4 = ipAddresses.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+                // Dùng SslOnConnect cho Port 465
+                await client.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.SslOnConnect);
 
-                if (ip4 != null)
-                {
-                    Console.WriteLine($"[MAIL DEBUG] Resolved {host} to IPv4: {ip4}");
-
-                    // 3. Bỏ qua lỗi SSL (Vì chứng chỉ Gmail cấp cho domain, không cấp cho IP)
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-
-                    // 4. Kết nối thẳng vào IP
-                    await client.ConnectAsync(ip4.ToString(), port, SecureSocketOptions.StartTls);
-                }
-                else
-                {
-                    // Fallback nếu không tìm thấy IPv4
-                    await client.ConnectAsync(host, port, SecureSocketOptions.StartTls);
-                }
-
+                Console.WriteLine($"[MAIL] Authenticating...");
                 await client.AuthenticateAsync(smtpUser, smtpPass);
+
+                Console.WriteLine("[MAIL] Sending...");
                 await client.SendAsync(email);
 
-                Console.WriteLine("[MAIL DEBUG] Gửi thành công!");
+                Console.WriteLine("[MAIL] SUCCESS!");
             }
             catch (Exception ex)
             {
