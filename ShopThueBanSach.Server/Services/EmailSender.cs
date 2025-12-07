@@ -5,6 +5,8 @@ using ShopThueBanSach.Server.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using System;
+using System.Net; // Cần thêm dòng này để dùng Dns
+using System.Linq; // Cần thêm dòng này để dùng FirstOrDefault
 
 namespace ShopThueBanSach.Server.Services
 {
@@ -19,12 +21,10 @@ namespace ShopThueBanSach.Server.Services
 
         public async Task SendEmailAsync(string toEmail, string subject, string htmlContent)
         {
-            // 1. CẤU HÌNH (Lấy từ Environment trên Render)
-            // Lưu ý: Key phải là Smtp__Username (2 gạch dưới)
             var smtpUser = _configuration["Smtp:Username"];
             var smtpPass = _configuration["Smtp:Password"];
-            var smtpHost = "smtp.gmail.com";
-            var smtpPort = 587; // <--- ĐỔI VỀ 587
+            var host = "smtp.gmail.com";
+            var port = 587;
 
             var email = new MimeMessage();
             email.From.Add(new MailboxAddress("Shop Sach Online", smtpUser));
@@ -37,36 +37,44 @@ namespace ShopThueBanSach.Server.Services
             using var client = new SmtpClient();
             try
             {
-                // Tăng timeout lên 30s để chờ mạng
-                client.Timeout = 30000;
+                client.Timeout = 30000; // Timeout 10s là đủ
 
-                // Debug: Ghi log để biết nó đang chạy đến đâu
-                Console.WriteLine($"[MAIL DEBUG] Connecting to {smtpHost}:{smtpPort}...");
+                // --- KỸ THUẬT FORCE IPv4 ---
+                // 1. Phân giải tên miền ra IP
+                var ipAddresses = await Dns.GetHostAddressesAsync(host);
 
-                // 2. KẾT NỐI: Dùng Port 587 + StartTls
-                // (MailKit xử lý StartTls tốt hơn System.Net.Mail cũ rất nhiều)
-                await client.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.StartTls);
+                // 2. Chỉ lấy địa chỉ IPv4 (InterNetwork)
+                var ip4 = ipAddresses.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
 
-                Console.WriteLine("[MAIL DEBUG] Authenticating...");
-                // 3. ĐĂNG NHẬP
+                if (ip4 != null)
+                {
+                    Console.WriteLine($"[MAIL DEBUG] Resolved {host} to IPv4: {ip4}");
+
+                    // 3. Bỏ qua lỗi SSL (Vì chứng chỉ Gmail cấp cho domain, không cấp cho IP)
+                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+                    // 4. Kết nối thẳng vào IP
+                    await client.ConnectAsync(ip4.ToString(), port, SecureSocketOptions.StartTls);
+                }
+                else
+                {
+                    // Fallback nếu không tìm thấy IPv4
+                    await client.ConnectAsync(host, port, SecureSocketOptions.StartTls);
+                }
+
                 await client.AuthenticateAsync(smtpUser, smtpPass);
-
-                Console.WriteLine("[MAIL DEBUG] Sending...");
-                // 4. GỬI
                 await client.SendAsync(email);
 
-                Console.WriteLine("[MAIL DEBUG] Sent Successfully!");
+                Console.WriteLine("[MAIL DEBUG] Gửi thành công!");
             }
             catch (Exception ex)
             {
-                // Ghi log lỗi chi tiết
-                Console.WriteLine($"[EMAIL ERROR] Lỗi chi tiết: {ex.ToString()}");
+                Console.WriteLine($"[EMAIL ERROR] {ex.Message}");
                 throw;
             }
             finally
             {
-                if (client.IsConnected)
-                    await client.DisconnectAsync(true);
+                await client.DisconnectAsync(true);
             }
         }
     }
