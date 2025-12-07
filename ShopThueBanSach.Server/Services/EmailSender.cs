@@ -2,6 +2,10 @@
 using MailKit.Security;
 using MimeKit;
 using ShopThueBanSach.Server.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
+using System;
+
 namespace ShopThueBanSach.Server.Services
 {
     public class EmailSender : IEmailSender
@@ -15,53 +19,54 @@ namespace ShopThueBanSach.Server.Services
 
         public async Task SendEmailAsync(string toEmail, string subject, string htmlContent)
         {
-            // 1. Lấy cấu hình từ Biến môi trường
+            // 1. CẤU HÌNH (Lấy từ Environment trên Render)
+            // Lưu ý: Key phải là Smtp__Username (2 gạch dưới)
             var smtpUser = _configuration["Smtp:Username"];
             var smtpPass = _configuration["Smtp:Password"];
             var smtpHost = "smtp.gmail.com";
-            var smtpPort = 587;
-
-            // 2. KIỂM TRA AN TOÀN (Quan trọng):
-            // Nếu quên set biến môi trường trên Render, code sẽ báo lỗi rõ ràng thay vì lỗi chung chung
-            if (string.IsNullOrEmpty(smtpUser) || string.IsNullOrEmpty(smtpPass))
-            {
-                throw new Exception("Lỗi Cấu hình: Chưa tìm thấy Smtp:Username hoặc Smtp:Password trong Environment Variables.");
-            }
+            var smtpPort = 587; // <--- ĐỔI VỀ 587
 
             var email = new MimeMessage();
             email.From.Add(new MailboxAddress("Shop Sach Online", smtpUser));
             email.To.Add(new MailboxAddress("", toEmail));
             email.Subject = subject;
 
-            var builder = new BodyBuilder();
-            builder.HtmlBody = htmlContent;
+            var builder = new BodyBuilder { HtmlBody = htmlContent };
             email.Body = builder.ToMessageBody();
 
             using var client = new SmtpClient();
             try
             {
-                // Timeout kết nối: 10 giây (để không bị treo quá lâu nếu mạng lag)
-                client.Timeout = 100000;
+                // Tăng timeout lên 30s để chờ mạng
+                client.Timeout = 30000;
 
-                // 3. KẾT NỐI:
-                // Dùng Port 465 + SslOnConnect để vượt qua tường lửa Google trên Render
-                await client.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.SslOnConnect);
+                // Debug: Ghi log để biết nó đang chạy đến đâu
+                Console.WriteLine($"[MAIL DEBUG] Connecting to {smtpHost}:{smtpPort}...");
 
-                // 4. ĐĂNG NHẬP
+                // 2. KẾT NỐI: Dùng Port 587 + StartTls
+                // (MailKit xử lý StartTls tốt hơn System.Net.Mail cũ rất nhiều)
+                await client.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.StartTls);
+
+                Console.WriteLine("[MAIL DEBUG] Authenticating...");
+                // 3. ĐĂNG NHẬP
                 await client.AuthenticateAsync(smtpUser, smtpPass);
 
-                // 5. GỬI
+                Console.WriteLine("[MAIL DEBUG] Sending...");
+                // 4. GỬI
                 await client.SendAsync(email);
+
+                Console.WriteLine("[MAIL DEBUG] Sent Successfully!");
             }
             catch (Exception ex)
             {
-                // Log lỗi ra màn hình Console của Render (xem trong tab Logs)
-                Console.WriteLine($"[EMAIL ERROR] Failed to send email to {toEmail}. Error: {ex.Message}");
-                throw; // Ném lỗi ra ngoài để Controller bắt được và báo về Frontend
+                // Ghi log lỗi chi tiết
+                Console.WriteLine($"[EMAIL ERROR] Lỗi chi tiết: {ex.ToString()}");
+                throw;
             }
             finally
             {
-                await client.DisconnectAsync(true);
+                if (client.IsConnected)
+                    await client.DisconnectAsync(true);
             }
         }
     }
