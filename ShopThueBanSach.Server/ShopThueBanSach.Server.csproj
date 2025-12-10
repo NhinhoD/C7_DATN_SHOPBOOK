@@ -11,17 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\Images\Staffs\**" />
-    <Compile Remove="wwwroot\Images\Users\**" />
     <Compile Remove="wwwroot\ImageUsers\**" />
-    <Content Remove="wwwroot\Images\Staffs\**" />
-    <Content Remove="wwwroot\Images\Users\**" />
     <Content Remove="wwwroot\ImageUsers\**" />
-    <EmbeddedResource Remove="wwwroot\Images\Staffs\**" />
-    <EmbeddedResource Remove="wwwroot\Images\Users\**" />
     <EmbeddedResource Remove="wwwroot\ImageUsers\**" />
-    <None Remove="wwwroot\Images\Staffs\**" />
-    <None Remove="wwwroot\Images\Users\**" />
     <None Remove="wwwroot\ImageUsers\**" />
   </ItemGroup>
 
@@ -60,7 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Images\Slides\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
