@@ -106,7 +106,7 @@ collections,
 			vnpay.AddRequestData("vnp_Amount", ((int)(model.Amount * 100)).ToString());
 			vnpay.AddRequestData("vnp_CreateDate", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
 			vnpay.AddRequestData("vnp_CurrCode", _configuration["Vnpay:CurrCode"]);
-			vnpay.AddRequestData("vnp_IpAddr", context.Connection.RemoteIpAddress?.ToString() ?? "74.220.52.0/24\n74.220.60.0/24");
+			vnpay.AddRequestData("vnp_IpAddr", context.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1");
 			vnpay.AddRequestData("vnp_Locale", _configuration["Vnpay:Locale"]);
 			vnpay.AddRequestData("vnp_OrderInfo", model.OrderDescription);
 			vnpay.AddRequestData("vnp_OrderType", model.OrderType);
