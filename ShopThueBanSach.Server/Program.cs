@@ -33,7 +33,7 @@ namespace ShopThueBanSach.Server
 				options.IdleTimeout = TimeSpan.FromHours(2);
 				options.Cookie.HttpOnly = true;
 				options.Cookie.IsEssential = true;
-				options.Cookie.SameSite = SameSiteMode.None; // ✅ thêm dòng này
+				options.Cookie.SameSite = SameSiteMode.None;
 				options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 			}); // Thêm bộ nhớ đệm cho Session
 			builder.Services.AddHttpContextAccessor(); // cần để lấy Session
@@ -72,7 +72,6 @@ In = Microsoft.OpenApi.Models.ParameterLocation.Header,
 					}
 				});
 			});
-			// ✅ THÊM DÒNG NÀY để giữ nguyên PascalCase (CategoryId, AuthorId, ...)
 			builder.Services.AddControllers()
 				.AddJsonOptions(options =>
 				{
@@ -95,12 +94,9 @@ In = Microsoft.OpenApi.Models.ParameterLocation.Header,
 			builder.Services.AddScoped<IActivityNotificationService, ActivityNotificationService>();
 			builder.Services.AddScoped<IUserManagerService, UserManagerService>();
 			builder.Services.AddScoped<ISlideService, SlideService>();
-			// Đăng ký các dịch vụ nghiệp vụ
 			builder.Services.AddScoped<IDiscountCodeService, DiscountCodeService>();
 			builder.Services.AddScoped<IPromotionService, PromotionService>();
-			// Đăng ký dịch vụ VoucherService với interface IVoucherService
 			builder.Services.AddScoped<IVoucherService, VoucherService>();
-			// Đăng ký dịch vụ FavoriteBookService
 			builder.Services.AddScoped<IFavoriteBookService, FavoriteBookService>();
 			builder.Services.AddScoped<ICartRentService, CartRentService>();
 			builder.Services.AddScoped<IRentOrderService, RentOrderService>();
@@ -110,12 +106,10 @@ In = Microsoft.OpenApi.Models.ParameterLocation.Header,
 			builder.Services.AddScoped<IRoleService, RoleService>();
 			builder.Services.AddScoped<IFavoriteRentBookService, FavoriteRentBookService>();
 			builder.Services.AddScoped<ICommentService, CommentService>();
-
 			builder.Services.AddScoped<ISaleCartService, SaleCartService>();
 			builder.Services.AddScoped<ISaleOrderService, SaleOrderService>();
 			builder.Services.AddScoped<IOrderManagementService, OrderManagementService>();
 			builder.Services.AddScoped<ISaleOrderManagementService, SaleOrderManagementService>();
-
 			builder.Services.AddScoped<IPhotoService, PhotoService>();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
