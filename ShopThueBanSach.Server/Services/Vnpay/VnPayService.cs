@@ -50,7 +50,7 @@ namespace ShopThueBanSach.Server.Services.Vnpay
             // Nên lấy từ Config thay vì Hard-code (để dễ sửa trên Render)
             vnpay.AddRequestData("vnp_Version", "2.1.0");
             vnpay.AddRequestData("vnp_Command", "pay");
-            vnpay.AddRequestData("vnp_TmnCode", "KHPCMS36"); // Đảm bảo đúng mã Terminal
+            vnpay.AddRequestData("vnp_TmnCode", "JKAVQQQ3"); // Đảm bảo đúng mã Terminal
 
             vnpay.AddRequestData("vnp_Amount", ((int)(model.Amount * 100)).ToString());
             vnpay.AddRequestData("vnp_CreateDate", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
