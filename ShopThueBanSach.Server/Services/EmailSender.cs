@@ -1,5 +1,6 @@
-﻿using System.Net.Mail;
-using System.Net;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using ShopThueBanSach.Server.Services.Interfaces;
 
 namespace ShopThueBanSach.Server.Services
@@ -10,26 +11,34 @@ namespace ShopThueBanSach.Server.Services
 
         public async Task SendEmailAsync(string toEmail, string subject, string htmlContent)
         {
-            var smtpSection = _configuration.GetSection("Smtp");
+            var apiKey = _configuration["Resend:ApiKey"];
+            var fromEmail = _configuration["Resend:FromEmail"];
 
-            using var client = new SmtpClient(smtpSection["Host"]!)
+            if (string.IsNullOrWhiteSpace(apiKey))
+                throw new Exception("Resend ApiKey is missing");
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", apiKey);
+
+            var payload = new
             {
-                Port = int.Parse(smtpSection["Port"]!),
-                Credentials = new NetworkCredential(smtpSection["Username"]!, smtpSection["Password"]!),
-                EnableSsl = true
+                from = fromEmail,
+                to = new[] { toEmail },
+                subject,
+                html = htmlContent
             };
 
-            var message = new MailMessage
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync("https://api.resend.com/emails", content);
+
+            if (!response.IsSuccessStatusCode)
             {
-                From = new MailAddress(smtpSection["Username"]!),
-                Subject = subject,
-                Body = htmlContent,
-                IsBodyHtml = true
-            };
-
-            message.To.Add(toEmail);
-
-            await client.SendMailAsync(message);
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Send email failed: {error}");
+            }
         }
     }
 }
