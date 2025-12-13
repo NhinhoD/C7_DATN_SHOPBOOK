@@ -86,7 +86,7 @@ namespace ShopThueBanSach.Server.Services
 					if (discountAmount > total)
 						discountAmount = total;
 
-					total -= discountAmount; // ✅ Trừ vào tổng sau khi cộng phí ship
+					total -= discountAmount; // Trừ vào tổng sau khi cộng phí ship
 				}
 			}
 
@@ -118,7 +118,7 @@ namespace ShopThueBanSach.Server.Services
 			var paymentInfo = new PaymentInformationModel
 			{
 				OrderType = "book_sale", // hoặc "book_rental" nếu là đơn thuê
-				Amount = total, // ✅ Số tiền đã được trừ voucher
+				Amount = total, // Số tiền đã được trừ voucher
 				OrderDescription = sessionModel.OrderDescription,
 				Name = request.UserId ?? "unknown"
 			};
