@@ -296,19 +296,19 @@ namespace ShopThueBanSach.Server.Services
 			_cache.Set($"email_confirm_{user.Email}", code, TimeSpan.FromMinutes(10));
 
 			await _emailSender.SendEmailAsync(user.Email, "Xác nhận địa chỉ email của bạn",
-$@"
-<div style='font-family: Arial, sans-serif; font-size: 16px; color: #333;'>
-    <h2 style='color: #2a8dd2;'>Xác nhận địa chỉ Email</h2>
-    <p>Xin chào <strong>{user.UserName ?? "bạn"}</strong>,</p>
-    <p>Bạn vừa yêu cầu xác nhận địa chỉ email của mình. Vui lòng sử dụng mã xác nhận dưới đây để hoàn tất quá trình:</p>
-    <p style='font-size: 18px; margin: 20px 0;'>
-        <strong style='background-color: #f0f0f0; padding: 10px 20px; border-radius: 5px; display: inline-block; letter-spacing: 2px;'>{code}</strong>
-    </p>
-    <p><i>Lưu ý: Mã xác nhận này sẽ hết hạn sau 10 phút.</i></p>
-    <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
-    <hr />
-    <p style='font-size: 14px; color: #999;'>Trân trọng,<br/>Đội ngũ hỗ trợ Customer</p>
-</div>");
+			$@"
+				<div style='font-family: Arial, sans-serif; font-size: 16px; color: #333;'>
+				<h2 style='color: #2a8dd2;'>Xác nhận địa chỉ Email</h2>
+				<p>Xin chào <strong>{user.UserName ?? "bạn"}</strong>,</p>
+				<p>Bạn vừa yêu cầu xác nhận địa chỉ email của mình. Vui lòng sử dụng mã xác nhận dưới đây để hoàn tất quá trình:</p>
+				<p style='font-size: 18px; margin: 20px 0;'>
+					<strong style='background-color: #f0f0f0; padding: 10px 20px; border-radius: 5px; display: inline-block; letter-spacing: 2px;'>{code}</strong>
+				</p>
+				<p><i>Lưu ý: Mã xác nhận này sẽ hết hạn sau 10 phút.</i></p>
+				<p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
+				<hr />
+				<p style='font-size: 14px; color: #999;'>Trân trọng,<br/>Đội ngũ hỗ trợ Customer</p>
+				</div>");
 
 			return new AuthResult
 			{
@@ -343,7 +343,7 @@ $@"
 					Expires = DateTimeOffset.UtcNow.AddDays(7)
 				});
 
-			// ✅ Gửi thông báo nếu là Staff đăng nhập
+			// Gửi thông báo nếu là Staff đăng nhập
 			var roles = await _userManager.GetRolesAsync(user);
 			if (roles.Contains("Staff"))
 			{
