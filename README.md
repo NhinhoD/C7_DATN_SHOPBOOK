@@ -12,7 +12,7 @@ Website bao gồm hai phân hệ chính:
 1. **User Storefront:** Nơi khách hàng tìm kiếm, xem và mua sách.
 2. **Admin Dashboard:** Trang quản trị để quản lý sách, đơn hàng và người dùng.
 
-🔗 **Live Demo:** [https://shopbook-frontend.vercel.app](https://shopbook-frontend.vercel.app)
+🔗 **Live Demo:** [https://www.shopbookhexa.io.vn/](https://www.shopbookhexa.io.vn/)
 
 ---
 
