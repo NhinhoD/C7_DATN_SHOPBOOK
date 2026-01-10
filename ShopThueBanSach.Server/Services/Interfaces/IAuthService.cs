@@ -16,10 +16,5 @@ namespace ShopThueBanSach.Server.Services.Interfaces
 		AuthenticationProperties GetGoogleLoginProperties(string returnUrl);
 		Task<AuthResult> ExternalLoginCallbackAsync();
 		#endregion
-
-		#region login Facebook
-		AuthenticationProperties GetFacebookLoginProperties(string returnUrl);
-		Task<AuthResult> ExternalFacebookCallbackAsync();
-		#endregion
 	}
 }

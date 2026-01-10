@@ -25,7 +25,7 @@ namespace ShopThueBanSach.Server.Controllers
 			_httpContextAccessor = httpContextAccessor;
 		}
 
-		// -------------------- GOOGLE LOGIN --------------------
+		//  GOOGLE LOGIN 
 
 		[HttpGet("external-login")]
 		public IActionResult GetExternalLoginUrl([FromQuery] string provider = "Google", [FromQuery] string returnUrl = "/")
@@ -52,29 +52,7 @@ namespace ShopThueBanSach.Server.Controllers
 			var redirect = $"https://shopbook-frontend.vercel.app/oauth-callback?token={result.Token}&refreshToken={result.RefreshToken}";
 			return Redirect(redirect);
 		}
-
-		// -------------------- FACEBOOK LOGIN --------------------
-
-		[HttpGet("facebook-login")]
-		public IActionResult GetFacebookLoginUrl([FromQuery] string returnUrl = "/")
-		{
-			var loginUrl = $"{Request.Scheme}://{Request.Host}/api/Auth/facebook-login-redirect?returnUrl={returnUrl}";
-			return Ok(new { loginUrl });
-		}
-
-		[HttpGet("facebook-login-redirect")]
-		public IActionResult FacebookLoginRedirect([FromQuery] string returnUrl = "/")
-		{
-			var props = _authService.GetFacebookLoginProperties(returnUrl);
-			return Challenge(props, "Facebook");
-		}
-
-		[HttpGet("facebook-callback")]
-		public async Task<IActionResult> FacebookCallback([FromQuery] string returnUrl = "/")
-		{
-			var result = await _authService.ExternalFacebookCallbackAsync();
-			return result.IsSuccess ? Ok(result) : Unauthorized(result);
-		}
+		
 		[HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {

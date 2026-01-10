@@ -168,7 +168,7 @@ In = Microsoft.OpenApi.Models.ParameterLocation.Header,
 			{
 				options.AddPolicy("AllowFrontend", builder =>
 				{
-					builder.WithOrigins("https://shopbook-frontend.vercel.app", "http://localhost:3000") // React & Vue dev server
+					builder.WithOrigins("http://shopbookhexa.io.vn", "http://localhost:3000") // React & Vue dev server
 						   .AllowAnyHeader()
 						   .AllowAnyMethod()
 						   .AllowCredentials();
