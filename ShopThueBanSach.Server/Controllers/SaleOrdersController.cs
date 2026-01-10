@@ -107,13 +107,13 @@ namespace ShopThueBanSach.Server.Controllers
 					value.GetType().GetProperty("orderId") is { } prop)
 				{
 					var orderId = prop.GetValue(value)?.ToString();
-					return Redirect($"https://shopbook-frontend.vercel.app/payment-success?orderId={orderId}");
+					return Redirect($"https://www.shopbookhexa.io.vn/payment-success?orderId={orderId}");
 				}
 
-				return Redirect("https://shopbook-frontend.vercel.app/");
+				return Redirect("https://www.shopbookhexa.io.vn/");
 			}
 
-			return Redirect("https://shopbook-frontend.vercel.app/payment-fail");
+			return Redirect("https://www.shopbookhexa.io.vn/");
 		}
 
 

@@ -111,7 +111,7 @@ namespace ShopThueBanSach.Server.Controllers
 						var orderId = orderIdProperty?.GetValue(orderObject)?.ToString();
 
 						// ✅ Redirect về frontend
-						return Redirect($"https://shopbook-frontend.vercel.app/payment-success?status=success&orderId={orderId}");
+						return Redirect($"https://www.shopbookhexa.io.vn/payment-success?status=success&orderId={orderId}");
 					}
 
 					return StatusCode(500, new
@@ -132,7 +132,7 @@ namespace ShopThueBanSach.Server.Controllers
 			}
 
 			// ❌ Trường hợp thanh toán thất bại
-			return Redirect($"https://shopbook-frontend.vercel.app/payment-success?status=fail&orderId={txnRef}");
+			return Redirect($"https://www.shopbookhexa.io.vn/payment-success?status=fail&orderId={txnRef}");
 		}
 
 	}

@@ -170,9 +170,9 @@ In = Microsoft.OpenApi.Models.ParameterLocation.Header,
                 {
                     policyBuilder.WithOrigins(
                             "https://www.shopbookhexa.io.vn",
-                            "https://shopbookhexa.io.vn",     
-                            "http://localhost:3000",           
-                            "http://localhost:5173"           
+                            "https://shopbookhexa.io.vn",
+                            "http://localhost:3000",
+                            "http://localhost:5173"
                         )
                         .AllowAnyHeader()
                         .AllowAnyMethod()
