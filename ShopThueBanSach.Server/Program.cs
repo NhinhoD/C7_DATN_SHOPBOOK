@@ -164,17 +164,22 @@ In = Microsoft.OpenApi.Models.ParameterLocation.Header,
 					RoleClaimType = ClaimTypes.Role
 				};
 			});
-			builder.Services.AddCors(options =>
-			{
-				options.AddPolicy("AllowFrontend", builder =>
-				{
-					builder.WithOrigins("https://shopbookhexa.io.vn", "http://localhost:3000") // React & Vue dev server
-						   .AllowAnyHeader()
-						   .AllowAnyMethod()
-						   .AllowCredentials();
-				});
-			});
-			builder.Services.AddScoped<IVnPayService, VnPayService>();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policyBuilder => 
+                {
+                    policyBuilder.WithOrigins(
+                            "https://www.shopbookhexa.io.vn",
+                            "https://shopbookhexa.io.vn",     
+                            "http://localhost:3000",           
+                            "http://localhost:5173"           
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+            builder.Services.AddScoped<IVnPayService, VnPayService>();
 			var app = builder.Build();
 
 			app.UseDefaultFiles();
